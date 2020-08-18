@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.zoomin.www.inquiryMapper">
+
+	<insert id="inquiryWrite">
+		INSERT INTO inquiryBoard (id, categorize, title,content,fileName,groupNum) VALUES (#{id},#{categorize},#{title},#{content},#{filename},#{groupNum})
+	</insert>
+
+	<select id="myInquiryList" resultType="InquiryDTO">
+		SELECT * FROM inquiryBoard WHERE id=#{id} ORDER BY no DESC
+	</select>
+	
+	<select id="allInquiryList" resultType="InquiryDTO">
+		SELECT * FROM inquiryBoard WHERE replyok ='답변완료' OR replyok = '답변미완료' ORDER BY no DESC
+	</select>
+	
+	<select id="inquiryCnt" resultType="InquiryDTO">
+		SELECT COUNT(*) FROM inquiryBoard WHERE replyok ='답변완료' OR replyok = '답변미완료' 
+	</select>
+	
+	<select id="inquiryView" resultType="InquiryDTO">
+		SELECT * FROM inquiryBoard a LEFT OUTER JOIN user_data b ON a.id=b.id WHERE a.no=#{no}
+	</select>
+	
+	<select id="inquiryViewByGroupnum" resultType="InquiryDTO">
+		SELECT * FROM inquiryBoard a LEFT OUTER JOIN user_data b ON a.id=b.id WHERE a.groupNum=#{no}
+	</select>
+	
+	<update id="inquiryModify">
+		UPDATE inquiryBoard SET categorize=#{categorize}, title=#{title}, content=#{content}, filename=#{filename} WHERE no=#{no}
+	</update>
+	
+	<delete id="inquiryDelete">
+		DELETE FROM inquiryBoard WHERE no=#{no}
+	</delete>
+	
+	<insert id="inquiryReOK">
+		INSERT INTO inquiryBoard (id, categorize, title,content,groupNum,replyok) VALUES (#{id},#{categorize},#{title},#{content},#{groupNum},#{replyok})
+	</insert>
+	
+	<update id="replyUp">
+		UPDATE inquiryBoard SET replyok='답변완료' WHERE no=#{no}
+	</update>
+</mapper>

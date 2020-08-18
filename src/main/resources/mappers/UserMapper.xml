@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.zoomin.www.userMapping">
+
+	<insert id="joinMember">
+		INSERT INTO user_data (member, id, pw, name, phone, introduce) VALUES (#{member},#{id},#{pw},#{name},#{phone},#{introduce})	
+	</insert>
+	
+	<select id="bestArtist" resultType="UserDTO">
+		SELECT * 
+		FROM user_data a 
+		LEFT OUTER JOIN talentBoard b 
+		ON a.id=b.id 
+		WHERE a.member='artist' 
+		ORDER BY b.gradeAvg DESC
+	</select>
+	
+	<select id="recentArtist" resultType="UserDTO">
+		SELECT * FROM user_data WHERE member='artist' ORDER BY join_date DESC 
+	</select>
+	
+	<select id="loginCheck" resultType="_int">
+			SELECT COUNT(*) FROM user_data WHERE id=#{id} AND pw=#{pw}
+	</select>
+	
+	<select id="getUserInfo" resultType="UserDTO">
+		SELECT * FROM user_data WHERE id=#{id}
+	</select>
+	
+	<update id="updateProfile">
+		UPDATE user_data SET img = #{img} WHERE id=#{id}
+	</update>
+	
+	<update id="modifyInOK">
+		UPDATE user_data SET name=#{name}, phone=#{phone}, introduce=#{introduce} WHERE id=#{id}
+	</update>
+	
+	<delete id="dropUser">
+		DELETE FROM user_data WHERE id=#{id}
+	</delete>
+	
+	<select id="idCheck" resultType="_int">
+		SELECT count(*) FROM user_data WHERE id=#{id}
+	</select>
+	
+	<!-- Admin -->
+	
+	<select id="totalUser" resultType="_int">
+		SELECT COUNT(*) FROM user_data WHERE member='artist' or member='general'
+	</select>
+	
+	<select id="totalArtistUser" resultType="_int">
+		SELECT COUNT(*) FROM user_data WHERE member='artist'
+	</select>
+	
+	<select id="totalGeneralUser" resultType="_int">
+		SELECT COUNT(*) FROM user_data WHERE member='artist'
+	</select>
+	
+	<select id="monthUser" resultType="_int">
+		<![CDATA[
+		SELECT COUNT(*)
+		FROM user_data 
+		WHERE (join_date > LAST_DAY(NOW() - interval 1 month) AND join_date <= LAST_DAY(NOW()))
+		]]>
+	</select>
+	
+	<select id="monthArtistUser" resultType="_int">
+		select count(*) 
+		from user_data 
+		<![CDATA[
+		where (join_date > LAST_DAY(NOW() - interval 1 month) AND join_date <= LAST_DAY(NOW())) 
+		AND member='artist'
+		]]>
+	</select>
+	
+	<select id="monthGeneralUser" resultType="_int">
+		select count(*) 
+		from user_data 
+		<![CDATA[
+		where (join_date > LAST_DAY(NOW() - interval 1 month) AND join_date <= LAST_DAY(NOW())) 
+		AND member='general'
+		]]>
+	</select>
+	
+	<select id="dailyUser" resultType="_int">
+		SELECT count(*) 
+		FROM user_data  
+		<![CDATA[
+		WHERE join_date > CURRENT_DATE()
+		]]>
+	</select>
+	
+	<select id="allUserById" resultType="UserDTO">
+		SELECT * FROM user_data WHERE id like CONCAT('%',#{searchKeyword},'%') AND (member = 'artist' or member = 'general') ORDER BY join_date DESC LIMIT #{pageNo},10
+	</select>
+	<select id="allUserByName" resultType="UserDTO">
+		SELECT * FROM user_data WHERE name like CONCAT('%',#{searchKeyword},'%') AND (member = 'artist' or member = 'general') ORDER BY join_date DESC LIMIT #{pageNo},10
+	</select>
+
+	
+	<select id="allUserByIdCnt" resultType="_int">
+		SELECT count(*) FROM user_data WHERE id like CONCAT('%',#{searchKeyword},'%') AND (member = 'artist' or member = 'general')
+	</select>
+	
+	<select id="allUserByNameCnt" resultType="_int">
+		SELECT count(*) FROM user_data WHERE name like CONCAT('%',#{searchKeyword},'%') AND (member = 'artist' or member = 'general')
+	</select>
+
+	
+	<select id="artistById" resultType="UserDTO">
+		SELECT * FROM user_data WHERE id like CONCAT('%',#{searchKeyword},'%') AND member = 'artist' ORDER BY join_date DESC LIMIT #{pageNo},10
+	</select>
+	
+	<select id="artistByName" resultType="UserDTO">
+		SELECT * FROM user_data WHERE name like CONCAT('%',#{searchKeyword},'%') AND member = 'artist' ORDER BY join_date DESC LIMIT #{pageNo},10
+	</select>
+	
+	<select id="artistByIdCnt" resultType="_int">
+		SELECT COUNT(*) FROM user_data WHERE id like CONCAT('%',#{searchKeyword},'%') AND member = 'artist'
+	</select>
+	
+	<select id="artistByNameCnt" resultType="_int">
+		SELECT COUNT(*) FROM user_data WHERE name like CONCAT('%',#{searchKeyword},'%') AND member = 'artist'
+	</select>
+	
+	<select id="generalById" resultType="UserDTO">
+		SELECT * FROM user_data WHERE id like CONCAT('%',#{searchKeyword},'%') AND member = 'general' ORDER BY join_date DESC LIMIT #{pageNo},10
+	</select>
+	
+	<select id="generalByName" resultType="UserDTO">
+		SELECT * FROM user_data WHERE name like CONCAT('%',#{searchKeyword},'%') AND member = 'general' ORDER BY join_date DESC LIMIT #{pageNo},10
+	</select>
+	
+	<select id="generalByIdCnt" resultType="_int">
+		SELECT COUNT(*) FROM user_data WHERE id like CONCAT('%',#{searchKeyword},'%') AND member = 'general'
+	</select>
+	
+	<select id="generalByNameCnt" resultType="_int">
+		SELECT COUNT(*) FROM user_data WHERE name like CONCAT('%',#{searchKeyword},'%') AND member = 'general'
+	</select>
+	
+
+
+	
+
+</mapper>

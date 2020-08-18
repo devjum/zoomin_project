@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.zoomin.www.talentMapper">
+
+
+	
+
+	
+	<select id="talentList" resultType="TalentDTO">
+		SELECT * 
+		FROM talentBoard t 
+		LEFT OUTER JOIN user_data u 
+		ON t.id=u.id 
+		<where>
+		<if test="searchChk!=null"> t.categorize in 
+			<foreach collection="searchChk" item="item" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+		<choose>
+			<when test="searchCondition == 'searchName' || seachCondition=''">
+				AND u.name like CONCAT('%',#{searchKeyword},'%')
+			</when>
+			<when test="searchCondition == 'searchTitleAndContent'">
+				AND (t.title like CONCAT('%',#{searchKeyword},'%') OR t.content like CONCAT('%',#{searchKeyword},'%'))
+			</when>
+		</choose>
+		</where>
+		ORDER BY no DESC 
+		LIMIT #{pageNo},#{limitCnt}
+	</select>
+	
+	<select id="talentListCnt" resultType="_int">
+		SELECT COUNT(*) 
+		FROM talentBoard t 
+		LEFT OUTER JOIN user_data u 
+		ON t.id=u.id 
+		<where>
+		<if test="searchChk!=null"> t.categorize in 
+			<foreach collection="searchChk" item="item" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+		<choose>
+			<when test="searchCondition == 'searchName' || seachCondition=''">
+				AND u.name like CONCAT('%',#{searchKeyword},'%')
+			</when>
+			<when test="searchCondition == 'searchTitleAndContent'">
+				AND (t.title like CONCAT('%',#{searchKeyword},'%') OR t.content like CONCAT('%',#{searchKeyword},'%'))
+			</when>
+		</choose>
+		</where>
+	</select>
+	
+	
+	<select id="talentView" resultType="TalentDTO">
+		SELECT * FROM talentBoard a LEFT OUTER JOIN user_data b ON a.id=b.id WHERE no=#{no}
+	</select>
+	
+	<select id="talentExist" resultType="_int">
+		SELECT count(*) FROM talentBoard WHERE id=#{id}
+	</select>
+	
+	<select id="getTalentNo" resultType="_int">
+		select no from talentBoard where id=#{id}
+	</select>
+	
+	<update id="talentModifyOK">
+		UPDATE talentBoard SET title=#{title}, categorize=#{categorize}, price1=#{price1}, price2=#{price2}, content=#{content}, video=#{video}, fileMultiName=#{fileMultiName}, thumbName=#{thumbName} WHERE id=#{id}
+	</update>
+	
+	<insert id="talentWrite">
+		INSERT INTO talentBoard (categorize, title, id, price1, price2, video, content, fileMultiName, thumbName) VALUES (#{categorize},#{title},#{id},#{price1},#{price2},#{video},#{content},#{fileMultiName},#{thumbName})
+	</insert>
+	
+	<delete id="talentDelete">
+		DELETE FROM talentBoard WHERE id=#{id}
+	</delete>
+	
+	<select id="getFileMultiName" resultType="String">
+		SELECT fileMultiName FROM talentBoard WHERE id=#{id}
+	</select>
+	
+	<select id="getThumbName" resultType="String">
+		SELECT thumbName FROM talentBoard WHERE id=#{id}
+	</select>
+	
+	<update id="updateAvg">
+		UPDATE talentBoard SET gradeAvg = (SELECT AVG(score) FROM reviews WHERE t_no=#{no}) WHERE no=#{no}
+	</update>
+	
+	<!--  Admin -->
+	
+	<select id="dailyTalent" resultType="_int">
+		SELECT count(*) 
+		FROM talentBoard  
+		<![CDATA[
+		WHERE wdate > CURRENT_DATE()
+		]]>
+	</select>
+
+</mapper>

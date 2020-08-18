@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.zoomin.www.reviewMapper">
+
+	<select id="talentReview" resultType="ReviewDTO">
+		SELECT * FROM reviews a LEFT OUTER JOIN user_data b ON a.id=b.id LEFT OUTER JOIN reserveBoard c ON a.r_no=c.no WHERE a.t_no=#{no} ORDER BY a.no DESC
+	</select>
+	
+	<insert id="reviewWrite">
+		INSERT INTO reviews ( id, review, t_no, r_no, score ) VALUES (#{id},#{review},#{t_no},#{r_no},#{score})
+	</insert>
+	
+	<select id="reviewExist" resultType="_int">
+		select count(*) from reserveBoard a LEFT OUTER JOIN reviews b ON a.no=b.r_no WHERE a.no=#{no} and b.r_no=#{no}
+	</select>
+	
+	<select id="getReview" resultType="ReviewDTO">
+		SELECT * FROM reviews WHERE r_no=#{no}
+	</select>
+	
+	<select id="scoreAvg" resultType="_int">
+		select avg(score) from reviews where t_no=#{no}
+	</select>
+	
+
+</mapper>
